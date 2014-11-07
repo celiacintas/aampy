@@ -13,6 +13,7 @@ from cv2 import cv
 import argparse
 
 
+
 class Finder(object):
     """docstring for Finder"""
     def __init__(self, path_cascade):
@@ -20,15 +21,16 @@ class Finder(object):
         super(Finder, self).__init__()
         self.cascade = cv2.CascadeClassifier(path_cascade)
 
-    def get_roi(self, img):
+    def get_roi(self, img): #1.2
         """Get the ROI of each image with the parameters finded in paper EARS"""
-        rects = self.cascade.detectMultiScale(img, 1.2, 3, 0
+        rects = self.cascade.detectMultiScale(img, 1.05, 3, 0
                                             |cv.CV_HAAR_FIND_BIGGEST_OBJECT
                                             |cv.CV_HAAR_DO_ROUGH_SEARCH
                                             |cv.CV_HAAR_SCALE_IMAGE,
                                             (0, 0))
 
         if len(rects) == 0:
+            print 'upsss'
             return []
         rects[:, 2:] += rects[:, :2]
 
@@ -43,6 +45,8 @@ def draw_rectangles(img, rects):
 
 
 if __name__ == '__main__':
+
+
     parser = argparse.ArgumentParser(description=
                                      'Iris Segmentation')
     group = parser.add_mutually_exclusive_group()
@@ -53,18 +57,22 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.file:
-        filename = [args.file]
+        filenames = [args.file]
     elif args.folder:
-        filename = map(lambda f: os.path.join(args.folder, f),
+        filenames = map(lambda f: os.path.join(args.folder, f),
                         os.listdir(args.folder))
     else:
         parser.print_help()
         sys.exit(1)
 
-    IMAGES = [cv2.imread(path, 0) for path in filename]
+   
+    #IMAGES = [cv2.imread(path, 0) for path in filename]
+    # this was nice but kill the mem
     my_finder = Finder("haarcascades/haarcascade_mcs_leftear.xml")
-    for i, image in enumerate(IMAGES):
+    for file in filenames:
+        image = cv2.imread(file, 0)
         rect = my_finder.get_roi(image)
         draw_rectangles(image, rect)
-        cv2.imwrite('/tmp/out{}.jpg'.format(splitext(basename(filename[i]))[0]),
+        cv2.imwrite('/tmp/out{}.jpg'.format(splitext(basename(file))[0]),
                                             image)
+
