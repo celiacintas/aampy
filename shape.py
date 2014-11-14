@@ -111,7 +111,7 @@ class Shape(object):
 
 def main(filename):
 	my_shapes = []
-	my_data = DataTest(filename, 200)
+	my_data = DataTest(filename, 200, ids=False)
 
 	for row in my_data.data.iterrows():
 		my_shapes.append(Shape(row[1][:].reshape(45, 2),'lero'))
@@ -124,4 +124,4 @@ def main(filename):
 	plt.show()
 
 if __name__ == '__main__':
-	main("/tmp/use.txt")
+	main("data/use.txt")
