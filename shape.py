@@ -5,7 +5,7 @@ from __future__ import division
 
 import numpy as np
 import matplotlib.pyplot as plt
-from data_test import DataTest
+from data import DataTrain
 from procrustes import procrustes
 
 
@@ -109,9 +109,9 @@ class Shape(object):
 			return plt.plot(self.xy[:,0], self.xy[:,1], 'o')
 
 
-def main(filename):
+def main(filename_xy, path_images):
 	my_shapes = []
-	my_data = DataTest(filename, 200, ids=False)
+	my_data = DataTrain(filename_xy, path_images, 200, ids=False)
 
 	for row in my_data.data.iterrows():
 		my_shapes.append(Shape(row[1][:].reshape(45, 2),'lero'))
@@ -124,4 +124,4 @@ def main(filename):
 	plt.show()
 
 if __name__ == '__main__':
-	main("data/use.txt")
+	main("data/use.txt", "images/")
