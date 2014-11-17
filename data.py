@@ -4,10 +4,20 @@ import os
 import pandas as pd
 from procrustes import procrustes
 import matplotlib.pyplot as plt
+import cv2
+import numpy as np
 
+"""
+This module has all the classes and methods for setting up 
+the training data (coordinates and images)
+"""
 
 
 class DataTrain(object):
+	"""
+	Class for contain dataframe with coordinates and 
+	image information
+	"""
 	def __init__(self, filename_xy, path_images, nrows=None, ids=False):
 		self.filename = filename_xy
 		self.path_images = path_images
@@ -21,19 +31,11 @@ class DataTrain(object):
 
 		return df
 
-	def preprocess_image(self, image_id):
-		prefixed = [filename for filename in os.listdir( self.path_images) if filename.startswith(image_id)]
-		print prefixed
-
 #TODO convert this to test
 
 def main(filename_xy, path_images):
-	my_shapes = []
 	my_data = DataTrain(filename_xy, path_images, ids=True)
-	name = my_data.data['tag'][1]
-	print name
-	my_data.preprocess_image(name)
-	#print my_data.data['tag'][0]
+	print my_data.data['tag'][1]
 	
 if __name__ == '__main__':
 	main("data/use.txt", "images/")
