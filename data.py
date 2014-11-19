@@ -2,10 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import pandas as pd
-from procrustes import procrustes
-import matplotlib.pyplot as plt
-import cv2
-import numpy as np
+
 
 """
 This module has all the classes and methods for setting up 
@@ -18,7 +15,7 @@ class DataTrain(object):
 	Class for contain dataframe with coordinates and 
 	image information
 	"""
-	def __init__(self, filename_xy, path_images, nrows=None, ids=False):
+	def __init__(self, filename_xy, path_images, nrows=None, ids=True):
 		self.filename = filename_xy
 		self.path_images = path_images
 		self.data = self.load_data(ids, nrows)
@@ -30,6 +27,9 @@ class DataTrain(object):
 		#df.sort(axis=1, inplace=True)
 
 		return df
+
+	def get_ids(self):
+		return list(self.data['tag'].values)
 
 #TODO convert this to test
 

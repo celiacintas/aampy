@@ -7,11 +7,11 @@ Module for (after) generalize any haarcascade classiffier
 
 import os
 import sys
-from os.path import basename, splitext
 import cv2
 from cv2 import cv
 import argparse
 import numpy as np
+from os.path import basename, splitext
 
 
 class NoROIException(Exception):
@@ -28,7 +28,7 @@ class Finder(object):
         super(Finder, self).__init__()
         self.cascade = cv2.CascadeClassifier(path_cascade)
 
-    def get_roi(self, img): #1.2
+    def get_roi(self, img): #1.2, 3 , 0
         """Get the ROI of each image with the parameters finded in paper EARS"""
         rects = self.cascade.detectMultiScale(img, 1.05, 3, 0
                                             |cv.CV_HAAR_FIND_BIGGEST_OBJECT
@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
 
     parser = argparse.ArgumentParser(description=
-                                     'Iris Segmentation')
+                                     'ROI extraction of ears (for now)')
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--file", dest="file", default=None,
                         help='Pass the path of the file to be process')
