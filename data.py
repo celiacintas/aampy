@@ -29,6 +29,8 @@ class DataTrain(object):
 	def get_ids(self):
 		return list(self.data.index.values)
 
+	def get_landmarks(self, id_people):
+		return self.data.loc[[id_people]].values
 #TODO convert this to test
 
 def main(filename_xy, path_images):

@@ -6,6 +6,7 @@ import cv2
 from os.path import splitext, basename, join
 from aampy.finder import Finder, NoROIException
 from aampy.data import DataTrain
+from aampy.tmp.nasty_tools import draw_landmarks
 
 class Profile(object):
 	"""docstring for Profile"""
@@ -24,8 +25,8 @@ class Profile(object):
 				print image_filename[0]
 				image = cv2.imread(join(self.data_train.path_images, image_filename[0]), 0)
 				rect = self.finder.get_roi(image)
-				
 				mag = self.finder.preprocess_image(image, rect)
+				draw_landmarks(mag, self.data_train.get_landmarks(image_id), image.shape)
 				cv2.imwrite('/tmp/out{}.jpg'.format(splitext(basename(image_filename[0]))[0]),
 				                                mag)
 			except NoROIException, e:
