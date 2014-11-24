@@ -21,21 +21,19 @@ class DataTrain(object):
 		self.data = self.load_data(ids, nrows)
 
 	def load_data(self, ids=False, nrows=None):
-		df = pd.read_csv(self.filename, sep=",", nrows=nrows)
-		if not ids:
-			df.drop(['tag'], inplace=True, axis=1)
+		df = pd.read_csv(self.filename, index_col='tag', nrows=nrows)
 		#df.sort(axis=1, inplace=True)
 
 		return df
 
 	def get_ids(self):
-		return list(self.data['tag'].values)
+		return list(self.data.index.values)
 
 #TODO convert this to test
 
 def main(filename_xy, path_images):
 	my_data = DataTrain(filename_xy, path_images, ids=True)
-	print my_data.data['tag'][1]
 	
 if __name__ == '__main__':
-	main("data/use.txt", "images/")
+	package_directory = os.path.dirname(os.path.abspath(__file__))
+	main(os.path.join(package_directory, "data/use.txt"), os.path.join(package_directory,"images/"))

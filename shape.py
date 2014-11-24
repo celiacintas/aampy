@@ -8,9 +8,6 @@ import matplotlib.pyplot as plt
 from data import DataTrain
 import os
 
-
-ORIGIN_X = ORIGIN_Y = 0.
-
 class Shape(object):
 		def __init__(self, landmarks, name):
 			self.xy = np.array(landmarks, dtype=np.int)
