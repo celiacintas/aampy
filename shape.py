@@ -6,7 +6,7 @@ from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 from data import DataTrain
-from procrustes import procrustes
+import os
 
 
 ORIGIN_X = ORIGIN_Y = 0.
@@ -124,4 +124,6 @@ def main(filename_xy, path_images):
 	plt.show()
 
 if __name__ == '__main__':
-	main("data/use.txt", "images/")
+	#TODO this should be a test
+	package_directory = os.path.dirname(os.path.abspath(__file__))
+	main(os.path.join(package_directory, "data/use.txt"), os.path.join(package_directory,"images/"))
