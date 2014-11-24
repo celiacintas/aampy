@@ -20,6 +20,11 @@ class NoROIException(Exception):
     def __init__(self):
         Exception.__init__(self, "ROI not found")
 
+class OutOfImageException(Exception):
+    """Exception for no ROI finded"""
+
+    def __init__(self):
+        Exception.__init__(self, "Offset of rect goes out of image")
 
 class Finder(object):
     """docstring for Finder"""
@@ -49,13 +54,15 @@ class Finder(object):
         """"""
         offset = 50
         # x_1, y_1, x_2, y_2  rect
-        tmp = img[rect[1] - offset :rect[3] + offset, rect[0] - offset: rect[2] + offset]
+        #TODO check if its needed to add a try except env
+        tmp = img[abs(rect[1] - offset) :rect[3] + offset, abs(rect[0] - offset): rect[2] + offset]
         norm = cv2.normalize(tmp, tmp, 0, 255, cv2.NORM_MINMAX , cv2.CV_8UC1)
-        print norm
+        cv2.imwrite('/tmp/tpm_{}.jpg'.format("lero"), norm)
         grad_y = cv2.Sobel(norm, cv2.CV_32F, 0, 1, ksize=3)
         grad_x = cv2.Sobel(norm, cv2.CV_32F, 1, 0, ksize=3)
         mag = cv2.magnitude(grad_x, grad_y)
-        print np.max(mag), mag.argmax(axis=0)
+        #print np.max(mag), mag.argmax(axis=0)
+        
         return mag
 
 def draw_rectangles(img, rects):

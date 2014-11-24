@@ -24,6 +24,7 @@ class Profile(object):
 				print image_filename[0]
 				image = cv2.imread(join(self.data_train.path_images, image_filename[0]), 0)
 				rect = self.finder.get_roi(image)
+				
 				mag = self.finder.preprocess_image(image, rect)
 				cv2.imwrite('/tmp/out{}.jpg'.format(splitext(basename(image_filename[0]))[0]),
 				                                mag)
