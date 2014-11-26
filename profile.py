@@ -6,7 +6,20 @@ import cv2
 from os.path import splitext, basename, join
 from aampy.finder import Finder, NoROIException
 from aampy.data import DataTrain
-from aampy.tmp.nasty_tools import draw_landmarks
+
+
+# this has to be in some draw-tools .. #TODO locate better later
+def draw_landmarks(image, coordinates, rect):
+	"""
+	Draw the landmarks in the ROI 
+	"""
+	# x_1, y_1, x_2, y_2  rect
+	print image.shape
+	for coord in range(0, len(coordinates), 2): #2D coordinates
+		cx, cy = coordinates[coord] - rect[0], coordinates[coord + 1] - rect[1]
+		cv2.circle(image, (int(cx), int(cy)), 5, (200, 200, 200), -1)
+
+	return image
 
 class Profile(object):
 	"""docstring for Profile"""
@@ -18,6 +31,8 @@ class Profile(object):
 		# move this to a numpy array for faster work
 
 	def load_profile(self):
+		"""
+		"""
 		
 		for image_id in self.data_train.get_ids():
 			image_filename = [filename for filename in os.listdir( self.data_train.path_images) if filename.startswith(image_id)]
@@ -25,14 +40,16 @@ class Profile(object):
 				print image_filename[0]
 				image = cv2.imread(join(self.data_train.path_images, image_filename[0]), 0)
 				rect = self.finder.get_roi(image)
-				mag = self.finder.preprocess_image(image, rect)
-				draw_landmarks(mag, self.data_train.get_landmarks(image_id), image.shape)
+				mag, real_rect = self.finder.preprocess_image(image, rect)
+				mag = draw_landmarks(mag, self.data_train.get_landmarks(image_id, image.shape), real_rect)
 				cv2.imwrite('/tmp/out{}.jpg'.format(splitext(basename(image_filename[0]))[0]),
 				                                mag)
 			except NoROIException, e:
 			    print e
 			except IndexError, e:
-				print e, "Image File Not Found"
+				print e, "Image File Not Found" #TODO create exc
+				pass
+
 
 # this can be 1 or 2D
 class VectorProfile(object):
@@ -42,12 +59,12 @@ class VectorProfile(object):
 		self.arg = arg
 
 
-# this are nasty tests
+#TODO this are nasty tests
 def main(filename_xy, path_images, haarcascade):
 	my_profile = Profile(filename_xy, path_images, haarcascade)
 	my_profile.load_profile()
 
 if __name__ == '__main__':
 	package_directory = os.path.dirname(os.path.abspath(__file__))
-	main(join(package_directory, "data/use.txt"), join(package_directory,"images/"), 
+	main(join(package_directory, "data/use.txt"), join(package_directory,"tmp/images/"), 
 		 join(package_directory, "haarcascades/haarcascade_mcs_leftear.xml"))
