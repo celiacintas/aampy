@@ -55,7 +55,8 @@ class Finder(object):
         offset = 50
         # x_1, y_1, x_2, y_2  rect
         #TODO check if its needed to add a try except env
-        tmp = img[abs(rect[1] - offset) :rect[3] + offset, abs(rect[0] - offset): rect[2] + offset]
+        x_1, y_1, x_2, y_2 = abs(rect[0] - offset), abs(rect[1] - offset), rect[2] + offset, rect[3] + offset  
+        tmp = img[y_1 :y_2, x_1: x_2]
         norm = cv2.normalize(tmp, tmp, 0, 255, cv2.NORM_MINMAX , cv2.CV_8UC1)
         cv2.imwrite('/tmp/tpm_{}.jpg'.format("lero"), norm)
         grad_y = cv2.Sobel(norm, cv2.CV_32F, 0, 1, ksize=3)
@@ -63,7 +64,7 @@ class Finder(object):
         mag = cv2.magnitude(grad_x, grad_y)
         #print np.max(mag), mag.argmax(axis=0)
         
-        return mag
+        return mag, [x_1, y_1, x_2, y_2]
 
 def draw_rectangles(img, rects):
     """Draw rectangle of ROI"""
