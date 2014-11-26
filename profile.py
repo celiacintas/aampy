@@ -9,17 +9,23 @@ from aampy.data import DataTrain
 
 
 # this has to be in some draw-tools .. #TODO locate better later
-def draw_landmarks(image, coordinates, rect):
+def draw_landmarks(image, coordinates):
 	"""
-	Draw the landmarks in the ROI 
+	Draw the landmarks in the image
 	"""
-	# x_1, y_1, x_2, y_2  rect
-	print image.shape
-	for coord in range(0, len(coordinates), 2): #2D coordinates
-		cx, cy = coordinates[coord] - rect[0], coordinates[coord + 1] - rect[1]
-		cv2.circle(image, (int(cx), int(cy)), 5, (200, 200, 200), -1)
+	for coord in coordinates: #2D coordinates
+		cv2.circle(image, (int(coord[0]), int(coord[1])), 5, (200, 200, 200), -1)
 
 	return image
+
+# this has to be in some blabla-tools .. #TODO locate better later
+def get_roi_coordinates(coordinates, rect):
+	"""
+	Translate the general coordinates to the ROI rect
+	"""
+	return map(lambda c: [coordinates[c] - rect[0], coordinates[c + 1] - rect[1]], 
+			   range(0, len(coordinates), 2))
+
 
 class Profile(object):
 	"""docstring for Profile"""
@@ -41,7 +47,8 @@ class Profile(object):
 				image = cv2.imread(join(self.data_train.path_images, image_filename[0]), 0)
 				rect = self.finder.get_roi(image)
 				mag, real_rect = self.finder.preprocess_image(image, rect)
-				mag = draw_landmarks(mag, self.data_train.get_landmarks(image_id, image.shape), real_rect)
+				coordinates = get_roi_coordinates(self.data_train.get_landmarks(image_id, image.shape), real_rect)
+				mag = draw_landmarks(mag, coordinates)
 				cv2.imwrite('/tmp/out{}.jpg'.format(splitext(basename(image_filename[0]))[0]),
 				                                mag)
 			except NoROIException, e:
