@@ -27,10 +27,22 @@ class DataTrain(object):
 		return df
 
 	def get_ids(self):
+		"""
+		Return ids of the samples to search images or get landmarks
+		"""
 		return list(self.data.index.values)
 
-	def get_landmarks(self, id_people):
-		return self.data.loc[[id_people]].values
+	def get_landmarks(self, id_people, fullsize):
+		"""
+		Return the landmarks of some particular id, and change de origin
+		location tps diffs opencv
+		"""
+		landmarks = self.data.loc[[id_people]].values[0]
+		for coord in range(1, len(landmarks), 2): #only y-values
+			landmarks[coord] = fullsize[0] - landmarks[coord]
+
+		return landmarks
+
 #TODO convert this to test
 
 def main(filename_xy, path_images):
