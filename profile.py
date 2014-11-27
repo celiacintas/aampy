@@ -33,11 +33,26 @@ class Profile(object):
 		super(Profile, self).__init__()
 		self.data_train = DataTrain(filename_xy, path_images)
 		self.finder = Finder(haarcascade)
-		self.vectors = []
-		# move this to a numpy array for faster work
+		self.vectors = {}
+		# move this to a numpy array/ dataframe pandas for faster work
 
+	def load_vectors(self, id_people, number_landmarks):
+		"""
+		Take the ortogonal vectors for 1D and 9 cell neigh for 2D profiles.
+		"""
+		tmp_vec = []
+		for landm, shape_profile in number_landmarks:
+			if shape_profile == '1D':
+				tmp_vec.append(VectorProfile1D(self.coordinates[landm: landm + 2], self.magnitude))
+			elif shape_profile == '2D':
+				self.vectors.append(VectorProfile2D(self.coordinates[landm: landm + 2], self.magnitude))
+
+		self.vectors[id_people] = tmp_vec
+	
 	def load_profile(self):
 		"""
+		for each individual we search the vector 1D or 2D profile with magnitudes of sobel
+		images around the landmarks.
 		"""
 		
 		for image_id in self.data_train.get_ids():
@@ -45,18 +60,21 @@ class Profile(object):
 			try:
 				print image_filename[0]
 				image = cv2.imread(join(self.data_train.path_images, image_filename[0]), 0)
-				rect = self.finder.get_roi(image)
-				mag, real_rect = self.finder.preprocess_image(image, rect)
-				coordinates = get_roi_coordinates(self.data_train.get_landmarks(image_id, image.shape), real_rect)
-				mag = draw_landmarks(mag, coordinates)
-				cv2.imwrite('/tmp/out{}.jpg'.format(splitext(basename(image_filename[0]))[0]),
-				                                mag)
+				tmp_rect = self.finder.get_roi(image)
+				self.magnitude, real_rect = self.finder.preprocess_image(image, tmp_rect)
 			except NoROIException, e:
 			    print e
 			except IndexError, e:
 				print e, "Image File Not Found" #TODO create exc
-				pass
-
+			else:	
+				self.coordinates = get_roi_coordinates(self.data_train.get_landmarks(image_id, image.shape), real_rect)
+				self.load_vectors(image_id, zip(['1D'] * 45)) # FIX this should be in datatrain class
+				
+				#TODO only for debug remove later or build flag option
+				mag_tmp = draw_landmarks(self.magnitude, self.coordinates)
+				cv2.imwrite('/tmp/out{}.jpg'.format(splitext(basename(image_filename[0]))[0]),
+				                                mag_tmp)
+			
 
 # this can be 1 or 2D
 class VectorProfile(object):
@@ -65,6 +83,28 @@ class VectorProfile(object):
 		super(VectorProfile, self).__init__()
 		self.arg = arg
 
+class VectorProfile1D(VectorProfile):
+	"""docstring for VectorProfile1D"""
+	def __init__(self, coordinate, image_mag):
+		super(VectorProfile1D, self).__init__()
+		self.vector = self.__get_perpendicular(coordinate, image_mag)
+	
+	def __get_perpendicular_norm(self, coordinates_vector, image_mag):
+		vector_a = np.array(coordinates_vector)
+		vector_perp = np.empty_like(vector_a)
+		vector_perp[0] = -vector_a[1]
+		vector_perp[1] = vector_a[0]
+		#a/np.linalg.norm(a)
+		#after this get the mag values in the directrion of vect and norm
+
+class VectorProfile2D(VectorProfile):
+	"""docstring for VectorProfile2D"""
+	def __init__(self, arg):
+		super(VectorProfile2D, self).__init__()
+		self.arg = arg
+
+	def get_neigh():
+		pass
 
 #TODO this are nasty tests
 def main(filename_xy, path_images, haarcascade):

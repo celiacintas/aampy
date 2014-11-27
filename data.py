@@ -22,6 +22,7 @@ class DataTrain(object):
 
 	def load_data(self, ids=False, nrows=None):
 		df = pd.read_csv(self.filename, index_col='tag', nrows=nrows)
+		# should add a column to say if the landmarks has to have 1D or 2D profiles?
 		#df.sort(axis=1, inplace=True)
 
 		return df
