@@ -41,11 +41,12 @@ class Profile(object):
 		Take the ortogonal vectors for 1D and 9 cell neigh for 2D profiles.
 		"""
 		tmp_vec = []
+		#FIX the vector should be anato sig, not only the next node
 		for landm, shape_profile in number_landmarks:
 			if shape_profile == '1D':
-				tmp_vec.append(VectorProfile1D(self.coordinates[landm: landm + 2], self.magnitude))
+				tmp_vec.append(VectorProfile1D(self.coordinates[landm: landm + 4], self.magnitude))
 			elif shape_profile == '2D':
-				self.vectors.append(VectorProfile2D(self.coordinates[landm: landm + 2], self.magnitude))
+				self.vectors.append(VectorProfile2D(self.coordinates[landm: landm + 4], self.magnitude))
 
 		self.vectors[id_people] = tmp_vec
 	
