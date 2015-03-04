@@ -47,7 +47,7 @@ class Finder(object):
             raise NoROIException()
         else:
             rects[:, 2:] += rects[:, :2]
-            print rects
+            #print rects
             return rects[0]
 
     def preprocess_image(self, img, rect):
@@ -100,7 +100,7 @@ if __name__ == '__main__':
     # this was nice but kill the mem
     my_finder = Finder("haarcascades/haarcascade_mcs_leftear.xml")
     for file in filenames:
-        print file
+        #print file
         image = cv2.imread(file, 0)
         try:
             rect = my_finder.get_roi(image)
