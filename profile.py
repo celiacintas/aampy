@@ -26,7 +26,9 @@ def draw_whisker(image, whiskers):
     list_whiskers = whiskers.values()[0]
     for w in range(len(list_whiskers)-1):
         v = list_whiskers[w].vector.astype(np.int)
-        cv2.line(image, (v[0], v[1]), (v[0] + v[2], v[1] + v[3]), (255, 20, 20))
+        print v
+        cv2.line(image, (v[0], v[1]), (v[2], v[3]), (200, 200, 200), thickness=3)
+    return image
 
 # this has to be in some blabla-tools .. #TODO locate better later
 def get_roi_coordinates(coordinates, rect):
@@ -85,8 +87,8 @@ class Profile(object):
                 whiskers_tmp = self.load_vectors(image_id, ['1D'] * 4) # FIX this should be in datatrain class
                 #print whiskers_tmp
                 #TODO only for debug remove later or build flag option
-                mag_tmp = draw_landmarks(self.magnitude, self.coordinates[:4*2])
-                #mag_tmp = draw_whisker(self.magnitude, whiskers_tmp)
+                mag_tmp = draw_landmarks(self.magnitude, self.coordinates[:4])
+                mag_tmp = draw_whisker(mag_tmp, whiskers_tmp)
                 cv2.imwrite('/tmp/out{}.jpg'.format(splitext(basename(image_filename[0]))[0]),
                                                 mag_tmp)
             
