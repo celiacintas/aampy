@@ -20,7 +20,7 @@ class VectorProfile1D(VectorProfile):
         # this is tmp
         #self.vector = self.__get_pixels_vector(tmp_vector, image_mag)
     
-    def __get_perpendicular_norm(self, coordinates_vector):
+    def __get_perpendicular_norm(self, coordinates_vector, lenght=10):
         """
         """
         vector_a = np.array(coordinates_vector).flatten()
@@ -34,8 +34,8 @@ class VectorProfile1D(VectorProfile):
         temp_vector = (norm_vector[1], norm_vector[0])
         #Create a new line at B pointing in the direction of v:  
         #C.x = B.x + v.x * length; C.y = B.y + v.y * length;
-        output_vec = (vector_a[0] + temp_vector[0] * 100, vector_a[1] + temp_vector[1] * 100)
-        output_vec_aux = (vector_a[0] + temp_vector[0] * -100, vector_a[1] + temp_vector[1] * -100)
+        output_vec = (vector_a[0] + temp_vector[0] * lenght, vector_a[1] + temp_vector[1] * lenght)
+        output_vec_aux = (vector_a[0] + temp_vector[0] * -lenght, vector_a[1] + temp_vector[1] * -lenght)
         
         return np.array([output_vec, output_vec_aux]).flatten()
         

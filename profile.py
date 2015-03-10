@@ -19,14 +19,14 @@ def draw_landmarks(image, coordinates):
 
     return image
 
+# this has to be in some draw-tools .. #TODO locate better later
 def draw_whisker(image, whiskers):
     """
     Draw the whiskers ...
     """
     list_whiskers = whiskers.values()[0]
-    for w in range(len(list_whiskers)-1):
+    for w in range(len(list_whiskers)):
         v = list_whiskers[w].vector.astype(np.int)
-        print v
         cv2.line(image, (v[0], v[1]), (v[2], v[3]), (200, 200, 200), thickness=3)
     return image
 
@@ -56,6 +56,7 @@ class Profile(object):
         #FIX the vector should be anato sig, not only the next node
 
         for n in range(len(vectors_type)-1): #nasty fix
+            # last landmark should go with prev one.
             if vectors_type[n] == '1D':
                 tmp_vec.append(VectorProfile1D(self.coordinates[n: n + 2], self.magnitude))
             elif vectors_type[n] == '2D':
@@ -83,13 +84,11 @@ class Profile(object):
                 print e, "Image File Not Found" #TODO create exc
             else:    
                 self.coordinates = get_roi_coordinates(self.data_train.get_landmarks(image_id, image.shape), real_rect)
-                #print self.coordinates, len(self.coordinates)
-                whiskers_tmp = self.load_vectors(image_id, ['1D'] * 4) # FIX this should be in datatrain class
-                #print whiskers_tmp
+                whiskers_tmp = self.load_vectors(image_id, ['1D'] * 44) # FIX this should be in datatrain class
                 #TODO only for debug remove later or build flag option
-                mag_tmp = draw_landmarks(self.magnitude, self.coordinates[:4])
+                mag_tmp = draw_landmarks(self.magnitude, self.coordinates)
                 mag_tmp = draw_whisker(mag_tmp, whiskers_tmp)
-                cv2.imwrite('/tmp/out{}.jpg'.format(splitext(basename(image_filename[0]))[0]),
+                cv2.imwrite('/tmp/out_{}.jpg'.format(splitext(basename(image_filename[0]))[0]),
                                                 mag_tmp)
             
 
